@@ -1,0 +1,546 @@
+---
+swagger: "2.0"
+info:
+  version: "1"
+  title: "Notifications REST API"
+host: "0.0.0.0:11116"
+basePath: "/"
+tags: []
+schemes:
+- "http"
+paths:
+  /v1/notifications/account/{accountId}:
+    get:
+      tags:
+      - "v1"
+      summary: "Retrieves all notifications for given accountId."
+      operationId: "getV1NotificationsAccountAccountid"
+      parameters:
+      - name: "accountId"
+        in: "path"
+        required: true
+        type: "integer"
+      - name: "skip"
+        in: "query"
+        description: "Optional properties to filter by. Can be multiple."
+        required: false
+        type: "array"
+        items:
+          type: "string"
+          enum:
+          - "read"
+          - "completed"
+        collectionFormat: "multi"
+        x-constraint:
+          single: true
+      responses:
+        200:
+          description: "Successful"
+          schema:
+            type: "object"
+            properties:
+              data:
+                type: "array"
+                items:
+                  $ref: "#/definitions/inline_response_200_data"
+      x-swagger-router-controller: "V1"
+  /v1/comments/{parentType}/{parentId}/{category}:
+    get:
+      tags:
+      - "v1"
+      summary: "Retrieves all comments for given parent object."
+      operationId: "getV1CommentsParenttypeParentidCategory"
+      parameters:
+      - name: "parentType"
+        in: "path"
+        description: "The type of object that the comment is attached to"
+        required: true
+        type: "string"
+        enum:
+        - "scheduleAnswer"
+        - "schedule"
+        - "comment"
+      - name: "parentId"
+        in: "path"
+        description: "ID of the object that the comment is attached to"
+        required: true
+        type: "integer"
+      - name: "category"
+        in: "path"
+        description: "The type of comment"
+        required: true
+        type: "string"
+        enum:
+        - "flag"
+        - "reply"
+        - "query"
+      - name: "getChildren"
+        in: "query"
+        description: "Toggle for retrieving comments for children, if supported for\
+          \ the parentType. See docs for more info"
+        required: false
+        type: "boolean"
+        default: false
+      responses:
+        200:
+          description: "Successful"
+          schema:
+            type: "object"
+            properties:
+              data:
+                type: "array"
+                items:
+                  $ref: "#/definitions/inline_response_200_1_data"
+      x-swagger-router-controller: "V1"
+  /v1/comments:
+    post:
+      tags:
+      - "v1"
+      summary: "Creates a new comment with given data."
+      operationId: "postV1Comments"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/body"
+      responses:
+        200:
+          description: "Successful"
+          schema:
+            type: "object"
+            properties:
+              data:
+                type: "integer"
+                description: "Primary Key"
+      x-swagger-router-controller: "V1"
+  /v1/notifications:
+    post:
+      tags:
+      - "v1"
+      summary: "Creates a new notification with given data."
+      operationId: "postV1Notifications"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/body_1"
+      responses:
+        200:
+          description: "Successful"
+          schema:
+            type: "object"
+            properties:
+              data:
+                type: "integer"
+                description: "ID of the notification"
+      x-swagger-router-controller: "V1"
+  /v1/comments/{commentId}:
+    patch:
+      tags:
+      - "v1"
+      summary: "Updates a new comment with given data."
+      operationId: "patchV1CommentsCommentid"
+      parameters:
+      - name: "commentId"
+        in: "path"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/body_2"
+      responses:
+        default:
+          description: "Successful"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "V1"
+  /v1/notifications/{notificationId}:
+    patch:
+      tags:
+      - "v1"
+      summary: "Updates a new notification with given data."
+      operationId: "patchV1NotificationsNotificationid"
+      parameters:
+      - name: "notificationId"
+        in: "path"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/body_3"
+      responses:
+        default:
+          description: "Successful"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "V1"
+definitions:
+  body_3:
+    type: "object"
+    properties:
+      accountId:
+        type: "integer"
+        description: "ID of recipient of notification"
+      message:
+        type: "string"
+        description: "Message body for the notification"
+      referenceType:
+        type: "string"
+        description: "The type of object that the notification links to"
+        enum:
+        - "comment"
+      referenceId:
+        type: "integer"
+        description: "ID of the object that the notification links to"
+      trialId:
+        type: "integer"
+        description: "ID of the trial the notification is related to"
+  inline_response_200_1_data:
+    properties:
+      commentId:
+        type: "integer"
+        description: "Primary Key"
+      messageId:
+        type: "integer"
+        description: "ID of the message body for the comment"
+      message:
+        type: "string"
+        description: "Body of the message"
+      category:
+        type: "string"
+        description: "The type of comment"
+        enum:
+        - "flag"
+        - "reply"
+        - "query"
+      parentType:
+        type: "string"
+        description: "The type of object that the comment is attached to"
+        enum:
+        - "scheduleAnswer"
+        - "schedule"
+        - "comment"
+      parentId:
+        type: "integer"
+        description: "ID of the object that the comment is attached to"
+      ownerType:
+        type: "string"
+        description: "A descriptor of which group has ownership of a comment"
+        enum:
+        - "internal"
+        - "sponsor"
+        - "monitor"
+      trialId:
+        type: "integer"
+        description: "PK of the trial where the comment is located"
+      acknowledgedTime:
+        type: "number"
+        description: "Timestamp when a user acknowledges the comment"
+      acknowledgedBy:
+        type: "integer"
+        description: "ID of user who acknowledged the comment"
+      createdTime:
+        type: "number"
+        description: "Created timestamp"
+      createdBy:
+        type: "integer"
+        description: "ID of user who created the comment"
+      lastUpdatedTime:
+        type: "number"
+        description: "Updated timestamp"
+      lastUpdatedBy:
+        type: "integer"
+        description: "ID of user who updated the comment"
+      recipients:
+        type: "array"
+        description: "Array of recipients."
+        items:
+          type: "integer"
+          description: "ID of the recipient"
+    example:
+      ownerType: "internal"
+      trialId: 5
+      lastUpdatedBy: 2
+      messageId: 6
+      acknowledgedBy: 2
+      message: "message"
+      parentType: "scheduleAnswer"
+      parentId: 1
+      createdBy: 9
+      recipients:
+      - 4
+      - 4
+      commentId: 0
+      createdTime: 7.061401241503109105224211816675961017608642578125
+      lastUpdatedTime: 3.61607674925191080461672754609026014804840087890625
+      category: "flag"
+      acknowledgedTime: 5.63737665663332876420099637471139430999755859375
+  body_1:
+    type: "object"
+    properties:
+      accountId:
+        type: "integer"
+        description: "ID of recipient of notification"
+      message:
+        type: "string"
+        description: "Message body for the notification"
+      referenceType:
+        type: "string"
+        description: "The type of object that the notification links to"
+        enum:
+        - "comment"
+      referenceId:
+        type: "integer"
+        description: "ID of the object that the notification links to"
+      trialId:
+        type: "integer"
+        description: "ID of the trial the notification is related to"
+  body_2:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+        description: "Body of the message"
+      category:
+        type: "string"
+        description: "The type of comment"
+        enum:
+        - "flag"
+        - "reply"
+        - "query"
+      parentType:
+        type: "string"
+        description: "The type of object that the comment is attached to"
+        enum:
+        - "scheduleAnswer"
+        - "schedule"
+        - "comment"
+      parentId:
+        type: "integer"
+        description: "ID of the object that the comment is attached to"
+      ownerType:
+        type: "string"
+        description: "A descriptor of which group has ownership of a comment"
+        enum:
+        - "internal"
+        - "sponsor"
+        - "monitor"
+      trialId:
+        type: "integer"
+        description: "PK of the trial where the comment is located"
+      acknowledgedTime:
+        type: "number"
+        description: "Timestamp when a user acknowledges the comment"
+      acknowledgedBy:
+        type: "integer"
+        description: "ID of user who acknowledged the comment"
+      recipients:
+        type: "array"
+        description: "Array of recipients."
+        items:
+          type: "integer"
+          description: "ID of the recipient"
+  inline_response_200_1:
+    properties:
+      data:
+        type: "array"
+        items:
+          $ref: "#/definitions/inline_response_200_1_data"
+    example:
+      data:
+      - ownerType: "internal"
+        trialId: 5
+        lastUpdatedBy: 2
+        messageId: 6
+        acknowledgedBy: 2
+        message: "message"
+        parentType: "scheduleAnswer"
+        parentId: 1
+        createdBy: 9
+        recipients:
+        - 4
+        - 4
+        commentId: 0
+        createdTime: 7.061401241503109105224211816675961017608642578125
+        lastUpdatedTime: 3.61607674925191080461672754609026014804840087890625
+        category: "flag"
+        acknowledgedTime: 5.63737665663332876420099637471139430999755859375
+      - ownerType: "internal"
+        trialId: 5
+        lastUpdatedBy: 2
+        messageId: 6
+        acknowledgedBy: 2
+        message: "message"
+        parentType: "scheduleAnswer"
+        parentId: 1
+        createdBy: 9
+        recipients:
+        - 4
+        - 4
+        commentId: 0
+        createdTime: 7.061401241503109105224211816675961017608642578125
+        lastUpdatedTime: 3.61607674925191080461672754609026014804840087890625
+        category: "flag"
+        acknowledgedTime: 5.63737665663332876420099637471139430999755859375
+  inline_response_200:
+    properties:
+      data:
+        type: "array"
+        items:
+          $ref: "#/definitions/inline_response_200_data"
+    example:
+      data:
+      - trialId: 2
+        completedTime: 2.027123023002321833274663731572218239307403564453125
+        messageId: 1
+        referenceType: "comment"
+        locationType: "locationType"
+        readTime: 3.61607674925191080461672754609026014804840087890625
+        message: "message"
+        referenceId: 5
+        accountId: 6
+        createdBy: 7
+        locationId: 5
+        createdTime: 9.301444243932575517419536481611430644989013671875
+        notificationId: 0
+        location: "{}"
+      - trialId: 2
+        completedTime: 2.027123023002321833274663731572218239307403564453125
+        messageId: 1
+        referenceType: "comment"
+        locationType: "locationType"
+        readTime: 3.61607674925191080461672754609026014804840087890625
+        message: "message"
+        referenceId: 5
+        accountId: 6
+        createdBy: 7
+        locationId: 5
+        createdTime: 9.301444243932575517419536481611430644989013671875
+        notificationId: 0
+        location: "{}"
+  inline_response_200_2:
+    properties:
+      data:
+        type: "integer"
+        description: "Primary Key"
+    example:
+      data: 0
+  inline_response_200_3:
+    properties:
+      data:
+        type: "integer"
+        description: "ID of the notification"
+    example:
+      data: 0
+  body:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+        description: "Body of the message"
+      category:
+        type: "string"
+        description: "The type of comment"
+        enum:
+        - "flag"
+        - "reply"
+        - "query"
+      parentType:
+        type: "string"
+        description: "The type of object that the comment is attached to"
+        enum:
+        - "scheduleAnswer"
+        - "schedule"
+        - "comment"
+      parentId:
+        type: "integer"
+        description: "ID of the object that the comment is attached to"
+      ownerType:
+        type: "string"
+        description: "A descriptor of which group has ownership of a comment"
+        enum:
+        - "internal"
+        - "sponsor"
+        - "monitor"
+      trialId:
+        type: "integer"
+        description: "PK of the trial where the comment is located"
+      acknowledgedTime:
+        type: "number"
+        description: "Timestamp when a user acknowledges the comment"
+      acknowledgedBy:
+        type: "integer"
+        description: "ID of user who acknowledged the comment"
+      recipients:
+        type: "array"
+        description: "Array of recipients."
+        items:
+          type: "integer"
+          description: "ID of the recipient"
+  inline_response_200_data:
+    properties:
+      notificationId:
+        type: "integer"
+        description: "ID of the notification"
+      accountId:
+        type: "integer"
+        description: "ID of recipient of notification"
+      messageId:
+        type: "integer"
+        description: "ID of the message"
+      message:
+        type: "string"
+        description: "Message body for the notification"
+      referenceType:
+        type: "string"
+        description: "The type of object that the notification links to"
+        enum:
+        - "comment"
+      referenceId:
+        type: "integer"
+        description: "ID of the object that the notification links to"
+      locationType:
+        type: "string"
+        description: "The type of object where the location can be found"
+      locationId:
+        type: "integer"
+        description: "ID of the object where the location can be found"
+      location:
+        type: "object"
+        properties: {}
+      trialId:
+        type: "integer"
+        description: "ID of the trial the notification is related to"
+      createdBy:
+        type: "integer"
+        description: "ID of creator of notification"
+      createdTime:
+        type: "number"
+        description: "Created timestamp"
+      readTime:
+        type: "number"
+        description: "Read timestamp"
+      completedTime:
+        type: "number"
+        description: "Completed timestamp"
+    example:
+      trialId: 2
+      completedTime: 2.027123023002321833274663731572218239307403564453125
+      messageId: 1
+      referenceType: "comment"
+      locationType: "locationType"
+      readTime: 3.61607674925191080461672754609026014804840087890625
+      message: "message"
+      referenceId: 5
+      accountId: 6
+      createdBy: 7
+      locationId: 5
+      createdTime: 9.301444243932575517419536481611430644989013671875
+      notificationId: 0
+      location: "{}"
