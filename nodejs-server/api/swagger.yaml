@@ -3,10 +3,11 @@ swagger: "2.0"
 info:
   version: "1"
   title: "Notifications REST API"
-host: "0.0.0.0:11116"
-basePath: "/"
+host: "virtserver.swaggerhub.com"
+basePath: "/Science37/notifications-rest_api/1"
 tags: []
 schemes:
+- "https"
 - "http"
 paths:
   /v1/notifications/account/{accountId}:
