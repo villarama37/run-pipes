@@ -59,6 +59,7 @@ exports.getV1CommentsParenttypeParentidCategory = function(parentType,parentId,c
 
 /**
  * Retrieves all notifications for given accountId.
+ * # This is description _why should this work_  
  *
  * accountId Integer 
  * skip List Optional properties to filter by. Can be multiple. (optional)

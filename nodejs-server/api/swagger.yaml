@@ -14,6 +14,7 @@ paths:
       tags:
       - "v1"
       summary: "Retrieves all notifications for given accountId."
+      description: "# This is description\n_why should this work_\n\n"
       operationId: "getV1NotificationsAccountAccountid"
       parameters:
       - name: "accountId"
